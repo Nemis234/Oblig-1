@@ -1,0 +1,34 @@
+:root {
+    --location-color: #7aa5d0;
+}
+
+.forecast{
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    background-color: #295c8f;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+}
+
+.forecast .location{
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    padding: 10px;
+    border: 5px solid var(--location-color);
+    background-color: var(--location-color);
+    border-radius: 5px;
+}
+  
+.forecast .city {
+font-size: 26px;
+color: rgba(255,255,255,0.9);
+margin-bottom: 7px;
+font-weight: bold;
+text-align: center;
+}

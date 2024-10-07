@@ -1,0 +1,23 @@
+.posts {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    padding: 20px 0px;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+}
+
+section .post {
+    background-color: #dbd9d9;
+    padding: 10px;
+    margin: 0px 30px;
+    border: 1px solid #c2c2c2;
+    min-width: 20vw;
+    min-height: 20vh;
+}
+
+section .postHeader {
+    border-bottom: 2px solid #c2c2c2;
+}
