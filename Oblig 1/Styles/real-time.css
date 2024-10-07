@@ -10,15 +10,15 @@
     padding: 15px;
     border-radius: 5px;
     display: flex;
+    justify-content: space-between;
 }
 
 .forecast .location{
-    width: 20%;
+    width: 15%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-right: 20px;
     padding: 10px;
     border: 5px solid var(--location-color);
     background-color: var(--location-color);

@@ -20,53 +20,15 @@ let locationData = {
         "latitude": 59.91,
         "longitude": 10.75
     },
+    "Gjøvik": {
+        "latitude": 60.795,
+        "longitude": 10.69
+    },
 }
 
 let HTMLData = {}
 
 
-
-
-const getWeatherData = async(location) => {
-    // Fetches a json object with weather data for the given latitude and longitude
-    let params = {
-        "latitude": locationData[location].latitude,
-        "longitude": locationData[location].longitude,
-        "current": ["temperature_2m", "relative_humidity_2m", "is_day", "precipitation", "rain", "weather_code", "cloud_cover", "wind_speed_10m", "wind_gusts_10m"],
-        "forecast_days": 1,
-        "timezone": "auto",
-    };
-    let url = `https://api.open-meteo.com/v1/forecast?latitude=${params.latitude}&longitude=${params.longitude}&current=${params.current.toString()}&forecast_days=${params.forecast_days}&timezone=${params.timezone}`;
-
-    let response = await fetch(url)
-        .then(async responses => {
-            if (!responses.ok) {
-                throw Error("HTTP error, status: " + responses.status);
-            }
-            return responses.json();
-        })
-        .then(data => {
-            let current = data.current;
-            let currentUnits = data.current_units;
-
-
-            let weatherData = {}
-            weatherData[location] = {
-                time: current.time,
-                temperature_2m: current.temperature_2m + currentUnits.temperature_2m,
-                relative_humidity_2m: current.relative_humidity_2m + currentUnits.relative_humidity_2m,
-                is_day: current.is_day === 1 ? "Day" : "Night",
-                precipitation: current.precipitation + currentUnits.precipitation,
-                rain: current.rain + currentUnits.rain,
-                weather_code: current.weather_code,
-                cloud_cover: current.cloud_cover + currentUnits.cloud_cover,
-                wind_speed_10m: current.wind_speed_10m + currentUnits.wind_speed_10m,
-                wind_gusts_10m: current.wind_gusts_10m + currentUnits.wind_gusts_10m,
-            }
-            return weatherData;
-        })
-    return response;
-}
 
 const makeLocationHTMl = (forecastDiv,id) => {
     // Creates the HTML for a location and returns the header and
@@ -113,12 +75,57 @@ const makeLocationHTMl = (forecastDiv,id) => {
 
     return [cityText,temperatureText,dateText];
 }
-let wrap = document.getElementById('wrap');
-let forecastDiv = document.createElement('div');
-forecastDiv.classList.add('forecast');
-wrap.appendChild(forecastDiv);
-for (let key in locationData) {
-    HTMLData[key] = makeLocationHTMl(forecastDiv,key);
+
+const makeSectionHTML = (array) => {
+    let wrap = document.getElementById('wrap');
+    let forecastDiv = document.createElement('div');
+    forecastDiv.classList.add('forecast');
+    wrap.appendChild(forecastDiv);
+
+    for (let i = 0; i < array.length; i++) {
+        HTMLData[array[i]] = makeLocationHTMl(forecastDiv,array[i]);
+    }
+}
+
+const getWeatherData = async(location) => {
+    // Fetches a json object with weather data for the given latitude and longitude
+    let params = {
+        "latitude": locationData[location].latitude,
+        "longitude": locationData[location].longitude,
+        "current": ["temperature_2m", "relative_humidity_2m", "is_day", "precipitation", "rain", "weather_code", "cloud_cover", "wind_speed_10m", "wind_gusts_10m"],
+        "forecast_days": 1,
+        "timezone": "auto",
+    };
+    let url = `https://api.open-meteo.com/v1/forecast?latitude=${params.latitude}&longitude=${params.longitude}&current=${params.current.toString()}&forecast_days=${params.forecast_days}&timezone=${params.timezone}`;
+
+    let response = await fetch(url)
+        .then(async responses => {
+            if (!responses.ok) {
+                throw Error("HTTP error, status: " + responses.status);
+            }
+            return responses.json();
+        })
+        .then(data => {
+            let current = data.current;
+            let currentUnits = data.current_units;
+
+
+            let weatherData = {}
+            weatherData[location] = {
+                time: current.time,
+                temperature_2m: current.temperature_2m + currentUnits.temperature_2m,
+                relative_humidity_2m: current.relative_humidity_2m + currentUnits.relative_humidity_2m,
+                is_day: current.is_day === 1 ? "Day" : "Night",
+                precipitation: current.precipitation + currentUnits.precipitation,
+                rain: current.rain + currentUnits.rain,
+                weather_code: current.weather_code,
+                cloud_cover: current.cloud_cover + currentUnits.cloud_cover,
+                wind_speed_10m: current.wind_speed_10m + currentUnits.wind_speed_10m,
+                wind_gusts_10m: current.wind_gusts_10m + currentUnits.wind_gusts_10m,
+            }
+            return weatherData;
+        })
+    return response;
 }
 
 const getAllWeatherData = async(locationData) => {
@@ -145,6 +152,15 @@ const updateWeatherData = async() => {
     let weatherData = await getAllWeatherData(locationData);
     console.log(weatherData);
 }
+
+
+for (let i = 0; i < Math.ceil(Object.keys(locationData).length/5); i++) {
+    // Splits the locationData into arrays of 5
+    let array = Object.keys(locationData).slice(i*5, (i+1)*5); 
+    makeSectionHTML(array);
+}
+
+
 
 updateWeatherData();
 setInterval(updateWeatherData, 30000); // Updates every 30 seconds
